@@ -1,9 +1,8 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Top 10 Mortality Causes of South Korea of the years 2000, 2010, 2015, 2019"
+subtitle: "Poisson and Negative Bionimal Modelling of Annual Death Number and Cause"
 author: 
-  - First author
-  - Another author
+  - Hyuk Jang
 thanks: "Code and data are available at: LINK."
 date: today
 date-format: long
@@ -13,19 +12,36 @@ number-sections: true
 bibliography: references.bib
 ---
 
-```{r}
-#| include: false
-#| warning: false
+```{r setup}
+#| echo: false
 #| message: false
+#| warning: false
+
+#### Work space setup ####
 
 library(tidyverse)
-library(palmerpenguins)
+library(dplyr)
+library(rstanarm)
+library(ggplot2)
+library(modelsummary)
+library(bayesplot)
+library(parameters)
+library(broom)
+library(kableExtra)
+library(gt)
+library(readr)
+
+# Read data
+
+all_data <- read_csv("/Users/hyukjang/Top Mortality Causes South Korea//starter_folder-main/data/cleaned_data/all_data.csv")
+intersect_all_data <- read_csv("/Users/hyukjang/Top Mortality Causes South Korea/starter_folder-main/data/cleaned_data/intersect_all_data.csv")
+
 ```
 
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
+
 
 The remainder of this paper is structured as follows. @sec-data....
 
@@ -33,46 +49,78 @@ The remainder of this paper is structured as follows. @sec-data....
 
 # Data {#sec-data}
 
+## Raw Data
+
+## Cleaned Data
+
+
 Some of our data is of penguins (@fig-bills), from @palmerpenguins.
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
+#| label: all_data
+#| tbl-cap: Top 10 Mortality Rates of South Korea 
 #| echo: false
 
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
+head(all_data) |>
+  kable(
+    col.names = c("Year", "Cause", "Deaths", "Death Rate", "Ranking"),
+    align = c("l", "r", "r", "r", "r"),
+    digits = 0, booktabs = TRUE, linesep = ""
+  )
 ```
 
 Talk more about it.
 
 And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
 
+
 ```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
+#| label: intersect_all_data
+#| fig-cap: Common Mortality Causes of All Four Years 2000, 2010, 2015, 2019
 #| echo: false
 #| warning: false
 #| message: false
 
-analysis_data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
-
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
+head(intersect_all_data) |>
+  kable(
+    col.names = c("Year", "Cause", "Deaths"),
+    align = c("l", "r", "r"),
+    digits = 0, booktabs = TRUE, linesep = ""
+  )
 ```
 
+```{r}
+#| label: intersect_all_data_graph
+#| fig-cap: Line Graph of Common Mortality Causes of South Korea
+#| echo: false
+
+intersect_all_data|>
+  ggplot(aes(x = Year, y = Deaths, color = Cause)) +
+  geom_line() +
+  ggtitle("Common Mortality Causes") +
+  xlab("Year") +
+  ylab("Annual Number of Deaths in South Korea") +
+  theme_minimal() +
+  scale_x_continuous(breaks = unique(intersect_all_data$Year)) +
+  theme_minimal()
+
+```
 Talk way more about it. 
 
+## Basic Summary Statistics
 
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-sumsta_korea
+#| tbl-cap: "Summary statistics of the number of yearly deaths, by cause, in South Korea"
+
+datasummary(
+  Deaths ~ Min + Mean + Max + SD + Var + N,
+  fmt = 0,
+  data = intersect_all_data
+)
+```
 
 # Model
 
@@ -83,6 +131,31 @@ Here we briefly describe the Bayesian analysis model used to investigate... Back
 ## Model set-up
 
 Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
+
+```{r}
+#| label: intersect_all_data_graph
+#| tbl-cap: Line Graph of Common Mortality Causes of South Korea
+#| echo: false
+
+korea_poisson <- readRDS("/Users/hyukjang/Top Mortality Causes South Korea/starter_folder-main/models/cause_of_death_south_korea_poisson.rds")
+korea_neg_bin <- readRDS("/Users/hyukjang/Top Mortality Causes South Korea/starter_folder-main/models/cause_of_death_south_korea_neg_binomial.rds")
+coef_short_names <-
+  c("Ischaemic heart disease" = "CHD",
+    "Liver cancer" = "Liver Cancer",
+    "Self-harm" = "Self Harm",
+    "Stomach cancer" = "Stomach Cancer",
+    "Stroke" = "Stroke",
+    "Trachea, bronchus, lung cancers" = "Lung Cancer"
+  )
+
+modelsummary(
+  list(
+    "Poisson" = korea_poisson,
+    "Negative binomial" = korea_neg_bin
+  ),
+  coef_map = coef_short_names
+)
+```
 
 \begin{align} 
 y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
