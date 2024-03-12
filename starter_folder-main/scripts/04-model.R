@@ -40,7 +40,6 @@ intersect_all_data|>
   scale_x_continuous(breaks = unique(intersect_all_data$Year)) +
   theme_minimal()
 
-
 cause_of_death_south_korea_poisson <-
   stan_glm(
     Deaths ~ Cause,
@@ -57,6 +56,29 @@ cause_of_death_south_korea_neg_binomial <-
     seed = 853
   )
 
+coef_short_names <-
+  c("(Intercept)" = "Intercept",
+    "CauseLiver cancer" = "Liver Cancer",
+    "CauseSelf-harm" = "Self Harm",
+    "CauseStomach cancer" = "Stomach Cancer",
+    "CauseStroke" = "Stroke",
+    "CauseTrachea, bronchus, lung cancers" = "Trachea, Bronchus, Lung Cancer"
+  )
+
+poisson_model_summary <- modelsummary(
+  list(
+    "Poisson" = cause_of_death_south_korea_poisson
+  ),
+  coef_map = coef_short_names
+)
+
+neg_bin_model_summary <- modelsummary(
+  list(
+    "Negative Binomial" = cause_of_death_south_korea_neg_binomial
+  ),
+  coef_map = coef_short_names
+)
+
 #### Save model ####
 saveRDS(
   cause_of_death_south_korea_poisson,
@@ -68,73 +90,16 @@ saveRDS(
   file = "starter_folder-main/models/cause_of_death_south_korea_neg_binomial.rds"
 )
 
-coef_short_names <-
-  c("Ischaemic heart disease" = "CHD",
-    "Liver cancer" = "Liver Cancer",
-    "Self-harm" = "Self Harm",
-    "Stomach cancer" = "Stomach Cancer",
-    "Stroke" = "Stroke",
-    "Trachea, bronchus, lung cancers" = "Lung Cancer"
-  )
-
-# Extract coefficients from the models
-poisson_coefficients <- as.list(coef(cause_of_death_south_korea_poisson))
-neg_binomial_coefficients <- as.list(coef(cause_of_death_south_korea_neg_binomial))
-
-poisson_coefficients <- subset(poisson_coefficients$)
-
-# Map the short names to actual names
-poisson_coefficients$Cause <- coef_short_names[poisson_coefficients$Cause]
-neg_binomial_coefficients$Cause <- coef_short_names[neg_binomial_coefficients$Cause]
-
-# Print or use the modified coefficients data frames
-print(poisson_coefficients)
-print(neg_binomial_coefficients)
-
-
-
-
-
-
-
-
-model_list <- list(
-  "Poisson" = cause_of_death_south_korea_poisson,
-  "Negative binomial" = cause_of_death_south_korea_neg_binomial
+saveRDS(
+  poisson_model_summary,
+  file = "starter_folder-main/models/poisson_model_summary.rds"
 )
 
-# Extract the first element from each inner list for Poisson models
-poisson_summary_data <- lapply(model_list[[1]], function(poisson_model) {
-  poisson_model[[1]]  # Assuming the first element represents the desired information
-})
-
-# Extract the first element from each inner list for Negative Binomial models
-neg_binomial_summary_data <- lapply(model_list[[2]], function(neg_binomial_model) {
-  neg_binomial_model[[1]]  # Assuming the first element represents the desired information
-})
-
-# Convert the lists to data frames
-poisson_summary_df <- as.data.frame(poisson_summary_data)
-neg_binomial_summary_df <- as.data.frame(neg_binomial_summary_data)
-
-# Save the data frames as separate RDS files
-saveRDS(poisson_summary_df, "starter_folder-main/models/poisson_summary.rds")
-saveRDS(neg_binomial_summary_df, "starter_folder-main/models/neg_binomial_summary.rds")
-
-
-modelsummary(
-  list(
-    "Poisson" = cause_of_death_south_korea_poisson,
-    "Negative binomial" = cause_of_death_south_korea_neg_binomial
-  ),
-  coef_map = coef_short_names
+saveRDS(
+  neg_bin_model_summary,
+  file = "starter_folder-main/models/neg_bin_model_summary.rds"
 )
 
-pp_check(cause_of_death_south_korea_poisson) +
-  theme(legend.position = "bottom")
-
-pp_check(cause_of_death_south_korea_neg_binomial) +
-  theme(legend.position = "bottom")
 
 
 

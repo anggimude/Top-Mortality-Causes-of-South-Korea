@@ -30,6 +30,7 @@ library(broom)
 library(kableExtra)
 library(gt)
 library(readr)
+library(broom.mixed)
 
 # Read data
 
@@ -132,30 +133,9 @@ Here we briefly describe the Bayesian analysis model used to investigate... Back
 
 Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
 
-```{r}
-#| label: intersect_all_data_graph
-#| tbl-cap: Line Graph of Common Mortality Causes of South Korea
-#| echo: false
 
-korea_poisson <- readRDS("/Users/hyukjang/Top Mortality Causes South Korea/starter_folder-main/models/cause_of_death_south_korea_poisson.rds")
-korea_neg_bin <- readRDS("/Users/hyukjang/Top Mortality Causes South Korea/starter_folder-main/models/cause_of_death_south_korea_neg_binomial.rds")
-coef_short_names <-
-  c("Ischaemic heart disease" = "CHD",
-    "Liver cancer" = "Liver Cancer",
-    "Self-harm" = "Self Harm",
-    "Stomach cancer" = "Stomach Cancer",
-    "Stroke" = "Stroke",
-    "Trachea, bronchus, lung cancers" = "Lung Cancer"
-  )
 
-modelsummary(
-  list(
-    "Poisson" = korea_poisson,
-    "Negative binomial" = korea_neg_bin
-  ),
-  coef_map = coef_short_names
-)
-```
+
 
 \begin{align} 
 y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
@@ -185,29 +165,56 @@ Our results are summarized in @tbl-modelresults.
 #| eval: true
 #| warning: false
 #| message: false
+#| label: poissonsumamrymodel
+#| tbl-cap: "Poisson model of most prevalent cause of deaths in South Korea 2000, 2010, 2015, 2019"
 
-library(rstanarm)
 
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
+cause_of_death_south_korea_poisson <- readRDS("/Users/hyukjang/Top Mortality Causes South Korea/starter_folder-main/models/cause_of_death_south_korea_poisson.rds")
+
+coef_short_names <-
+  c("(Intercept)" = "Intercept",
+    "CauseLiver cancer" = "Liver Cancer",
+    "CauseSelf-harm" = "Self Harm",
+    "CauseStomach cancer" = "Stomach Cancer",
+    "CauseStroke" = "Stroke",
+    "CauseTrachea, bronchus, lung cancers" = "Trachea, Bronchus, Lung Cancer"
+  )
+
+modelsummary(
+  list(
+    "Poisson" = cause_of_death_south_korea_poisson
+  ),
+  coef_map = coef_short_names
+)
+
 ```
+
 
 ```{r}
 #| echo: false
 #| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
-#| warning: false
+#| label: negbinsumamrymodel
+#| tbl-cap: "Negative Binomial model of most prevalent cause of deaths in South Korea 2000, 2010, 2015, 2019"
 
-modelsummary::modelsummary(
+cause_of_death_south_korea_neg_binomial <- readRDS("/Users/hyukjang/Top Mortality Causes South Korea/starter_folder-main/models/cause_of_death_south_korea_neg_binomial.rds")
+
+coef_short_names <-
+  c("(Intercept)" = "Intercept",
+    "CauseLiver cancer" = "Liver Cancer",
+    "CauseSelf-harm" = "Self Harm",
+    "CauseStomach cancer" = "Stomach Cancer",
+    "CauseStroke" = "Stroke",
+    "CauseTrachea, bronchus, lung cancers" = "Trachea, Bronchus, Lung Cancer"
+  )
+
+modelsummary(
   list(
-    "First model" = first_model
+    "Negative Binomial" = cause_of_death_south_korea_neg_binomial
   ),
-  statistic = "mad",
-  fmt = 2
+  coef_map = coef_short_names
 )
-```
 
+```
 
 
 
@@ -252,15 +259,11 @@ In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. Th
 #| fig-cap: "Examining how the model fits, and is affected by, the data"
 #| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
 
-pp_check(first_model) +
-  theme_classic() +
+pp_check(cause_of_death_south_korea_poisson) +
   theme(legend.position = "bottom")
 
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
+pp_check(cause_of_death_south_korea_neg_binomial) +
+  theme(legend.position = "bottom")
 ```
 
 ## Diagnostics
@@ -279,9 +282,10 @@ posterior_vs_prior(first_model) +
 #| fig-subcap: ["Trace plot", "Rhat plot"]
 #| layout-ncol: 2
 
-plot(first_model, "trace")
+poisson <- loo(cause_of_death_south_korea_poisson, cores = 2)
+neg_binomial <- loo(cause_of_death_south_korea_neg_binomial, cores = 2)
 
-plot(first_model, "rhat")
+loo_compare(poisson, neg_binomial)
 ```
 
 
