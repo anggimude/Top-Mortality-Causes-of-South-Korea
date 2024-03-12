@@ -3,7 +3,7 @@ title: "Top 10 Mortality Causes of South Korea of the years 2000, 2010, 2015, 20
 subtitle: "Poisson and Negative Bionimal Modelling of Annual Death Number and Cause"
 author: 
   - Hyuk Jang
-thanks: "Code and data are available at: LINK."
+thanks: "Code and data are available at: https://github.com/anggimude/Top-Mortality-Causes-of-South-Korea"
 date: today
 date-format: long
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
@@ -62,7 +62,7 @@ Some of our data is of penguins (@fig-bills), from @palmerpenguins.
 #| tbl-cap: Top 10 Mortality Rates of South Korea 
 #| echo: false
 
-head(all_data) |>
+head(all_data, n =40) |>
   kable(
     col.names = c("Year", "Cause", "Deaths", "Death Rate", "Ranking"),
     align = c("l", "r", "r", "r", "r"),
@@ -82,7 +82,7 @@ And also planes (@fig-planes). (You can change the height and width, but don't w
 #| warning: false
 #| message: false
 
-head(intersect_all_data) |>
+head(intersect_all_data, n = 24) |>
   kable(
     col.names = c("Year", "Cause", "Deaths"),
     align = c("l", "r", "r"),
@@ -217,6 +217,38 @@ modelsummary(
 ```
 
 
+```{r}
+#| eval: true
+#| echo: false
+#| message: false
+#| warning: false
+#| label: fig-ppcheckandposteriorvsprior
+#| layout-ncol: 2
+#| fig-cap: "Examining how the model fits, and is affected by, the data"
+#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
+
+pp_check(cause_of_death_south_korea_poisson) +
+  theme(legend.position = "bottom")
+
+pp_check(cause_of_death_south_korea_neg_binomial) +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+#| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+#| label: fig-stanareyouokay
+#| fig-cap: "Checking the convergence of the MCMC algorithm"
+#| fig-subcap: ["Trace plot", "Rhat plot"]
+#| layout-ncol: 2
+
+poisson <- loo(cause_of_death_south_korea_poisson, cores = 2)
+neg_binomial <- loo(cause_of_death_south_korea_neg_binomial, cores = 2)
+
+loo_compare(poisson, neg_binomial)
+```
 
 # Discussion
 
@@ -249,22 +281,7 @@ In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. 
 
 In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
 
-```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
 
-pp_check(cause_of_death_south_korea_poisson) +
-  theme(legend.position = "bottom")
-
-pp_check(cause_of_death_south_korea_neg_binomial) +
-  theme(legend.position = "bottom")
-```
 
 ## Diagnostics
 
@@ -272,21 +289,7 @@ pp_check(cause_of_death_south_korea_neg_binomial) +
 
 @fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
 
-```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
 
-poisson <- loo(cause_of_death_south_korea_poisson, cores = 2)
-neg_binomial <- loo(cause_of_death_south_korea_neg_binomial, cores = 2)
-
-loo_compare(poisson, neg_binomial)
-```
 
 
 

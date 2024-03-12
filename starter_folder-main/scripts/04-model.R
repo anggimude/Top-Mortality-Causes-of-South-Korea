@@ -40,6 +40,7 @@ intersect_all_data|>
   scale_x_continuous(breaks = unique(intersect_all_data$Year)) +
   theme_minimal()
 
+# Poisson Model
 cause_of_death_south_korea_poisson <-
   stan_glm(
     Deaths ~ Cause,
@@ -48,6 +49,7 @@ cause_of_death_south_korea_poisson <-
     seed = 853
   )
 
+# Negative Model
 cause_of_death_south_korea_neg_binomial <-
   stan_glm(
     Deaths ~ Cause,
@@ -56,6 +58,7 @@ cause_of_death_south_korea_neg_binomial <-
     seed = 853
   )
 
+# Mapping Coefficient Names
 coef_short_names <-
   c("(Intercept)" = "Intercept",
     "CauseLiver cancer" = "Liver Cancer",
@@ -65,6 +68,7 @@ coef_short_names <-
     "CauseTrachea, bronchus, lung cancers" = "Trachea, Bronchus, Lung Cancer"
   )
 
+# Poisson Model summary
 poisson_model_summary <- modelsummary(
   list(
     "Poisson" = cause_of_death_south_korea_poisson
@@ -72,6 +76,7 @@ poisson_model_summary <- modelsummary(
   coef_map = coef_short_names
 )
 
+# Negative binomial summary
 neg_bin_model_summary <- modelsummary(
   list(
     "Negative Binomial" = cause_of_death_south_korea_neg_binomial
