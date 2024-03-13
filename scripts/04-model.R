@@ -16,6 +16,7 @@ library(parameters)
 library(broom)
 library(kableExtra)
 library(gt)
+library(broom.mixed)
 
 
 # Create model of common causes of death that appear twice or more
@@ -87,22 +88,22 @@ neg_bin_model_summary <- modelsummary(
 #### Save model ####
 saveRDS(
   cause_of_death_south_korea_poisson,
-  file = "starter_folder-main/models/cause_of_death_south_korea_poisson.rds"
+  file = "~/Top Mortality Causes South Korea/models/cause_of_death_south_korea_poisson.rds"
 )
 
 saveRDS(
   cause_of_death_south_korea_neg_binomial,
-  file = "starter_folder-main/models/cause_of_death_south_korea_neg_binomial.rds"
+  file = "~/Top Mortality Causes South Korea/models/cause_of_death_south_korea_neg_binomial.rds"
 )
 
 saveRDS(
   poisson_model_summary,
-  file = "starter_folder-main/models/poisson_model_summary.rds"
+  file = "~/Top Mortality Causes South Korea/models/poisson_model_summary.rds"
 )
 
 saveRDS(
   neg_bin_model_summary,
-  file = "starter_folder-main/models/neg_bin_model_summary.rds"
+  file = "~/Top Mortality Causes South Korea/models/neg_bin_model_summary.rds"
 )
 
 

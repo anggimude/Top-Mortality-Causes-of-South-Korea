@@ -11,7 +11,7 @@ library(readr)
 
 #### Save data ####
 # Saves the data of mortality of South Korea in csv format
-korea_2000 <- read_csv("starter_folder-main/data/raw_data/korea2000.csv")
-korea_2010 <- read_csv("starter_folder-main/data/raw_data/korea2010.csv")
-korea_2015 <- read_csv("starter_folder-main/data/raw_data/korea2015.csv")
-korea_2019 <- read_csv("starter_folder-main/data/raw_data/korea2019.csv")
+korea_2000 <- read_csv("~/Top Mortality Causes South Korea/data/raw_data/korea2000.csv")
+korea_2010 <- read_csv("~/Top Mortality Causes South Korea/data/raw_data/korea2010.csv")
+korea_2015 <- read_csv("~/Top Mortality Causes South Korea/data/raw_data/korea2015.csv")
+korea_2019 <- read_csv("~/Top Mortality Causes South Korea/data/raw_data/korea2019.csv")

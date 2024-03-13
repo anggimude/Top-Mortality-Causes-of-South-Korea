@@ -89,6 +89,6 @@ intersect_all_data <- all_data |>
   filter(n() > 3)|>
   select(-Ranking, -Death_rate)
 
-write_csv(all_data, "starter_folder-main/data/cleaned_data/all_data.csv")
-write_csv(intersect_all_data, "starter_folder-main/data/cleaned_data/intersect_all_data.csv")
+write_csv(all_data, "~/Top Mortality Causes South Korea/data/cleaned_data/all_data.csv")
+write_csv(intersect_all_data, "~/Top Mortality Causes South Korea/data/cleaned_data/intersect_all_data.csv")
 
