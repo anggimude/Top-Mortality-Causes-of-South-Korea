@@ -54,12 +54,16 @@ The remainder of this paper is structured as follows. @sec-data....
 # Data {#sec-data}
 
 ## Raw Data
+
 The data used in this paper is derived from WHO(WHO) and was downloaded from the WHO Mortality Database. WHO(WHO) provides data for years country-level Global Health Estimates(GHE2019) for the years 2000-2019. Because the years that have estimates of a list provided of the cause of death categories in terms of International Classification of Diseases, Tenth Revision(ICD-10) in terms of a summary table of number of deaths by cause, age, and sex for WHO(WHO) member states for the years are 2000, 2010, 2015, 2019; the data for these four years are cleaned and analyzed for this paper. The analysis of deaths by cause of the raw data is executed for the age groups from 5 to 85+. This paper looks into the data for Republic of Korea as the author is South Korean but also because WHO methods and data sources(citation) certifies a high quality of data. The raw data includes columns such as code, cause, IS03, year, sex, age group, population, deaths, death rate per 100000 population, DALY, DALY rate per 100000 population. 
 
 The cleaning, testing, and modelling of the data for this paper was done through R [@citeR] with the aid of the following packages: tidyverse [@citetidyverse], dplyr [@citedplyr], rstanarm [@citerstanarm], ggplot2 [@citeggplot2], modelsummary [@citemodelsummary], bayesplot [@citebayesplot], parameters [@citeparameters], broom [@citebroom], kableExtra [@citekableExtra], gt [@citegt], readr [@citereadr], broom.mixed [@citebroommixed].
 
+
 ## Cleaned Data
-The data that is needed for this paper is year, cause, and number of deaths, so the raw data is cleaned to contain only the three columns we need. Because we are looking into the top 10 mortality in this paper, we rank the causes based on its number of deaths and merge it into (@tbl-all_data_one). Now that the cleaning is done we can see the top 10 causes of deaths for the years 2000, 2010, 2015, and 2019, however, this isn't enough because to make a graph and create a poisson and negative binomial model, we must find the causes that are common in all of the years. (@tbl-intersect_data_one) represents the table in which only the causes that appear among all the years descending order of ranking. Now we can recognize the six main causes of death in South Korea is stroke, Ischaemic Heart Disease, Stomach Cancer, Trachea Bronchus Lung Cancer, Liver Cancer, and Self Harm. Looking at (@fig-intersect_all_data_graph), we can see some interesting trends. For example, there is a plunge in the annual number of deaths from stroke over the 9 year span. On the other hand, there has been increases for the causes of Ischaemic heart disease and Trachea, Bronchus, Lung cancer. There is a slight decrease in stomach cancer while liver cancer didn't fluctuate as much. Self harm is interesting because Korea is known to have the highest suicide rates out of all the OECD countries(Citation), and we see an increase in the number deaths from self harm has increased rapidly from 2000 to 2010 and a small decrease from 2010 to 2015. It seems like the death numbers from self harm has plateaued with a very slow rate of increase. In general, the top 10 most common causes of deaths are stroke, heart disease, stomach cancer, lung cancer, road injury, liver cancer, diabetes, Cirrhosis of the liver(liver damage), and self harm. 
+
+The data that is needed for this paper is year, cause, and number of deaths, so the raw data is cleaned to contain only the three columns we need. Because we are looking into the top 10 mortality in this paper, we rank the causes based on its number of deaths and merge it into @tbl-all_data_one. Now that the cleaning is done we can see the top 10 causes of deaths for the years 2000, 2010, 2015, and 2019, however, this isn't enough because to make a graph and create a poisson and negative binomial model, we must find the causes that are common in all of the years. @tbl-intersect_data_one represents the table in which only the causes that appear among all the years descending order of ranking. Now we can recognize the six main causes of death in South Korea is stroke, Ischaemic Heart Disease, Stomach Cancer, Trachea Bronchus Lung Cancer, Liver Cancer, and Self Harm. Looking at @fig-intersect_all_data_graph, we can see some interesting trends. For example, there is a plunge in the annual number of deaths from stroke over the 9 year span. On the other hand, there has been increases for the causes of Ischaemic heart disease and Trachea, Bronchus, Lung cancer. There is a slight decrease in stomach cancer while liver cancer didn't fluctuate as much. Self harm is interesting because Korea is known to have the highest suicide rates out of all the OECD countries(Citation), and we see an increase in the number deaths from self harm has increased rapidly from 2000 to 2010 and a small decrease from 2010 to 2015. It seems like the death numbers from self harm has plateaued with a very slow rate of increase. In general, the top 10 most common causes of deaths are stroke, heart disease, stomach cancer, lung cancer, road injury, liver cancer, diabetes, Cirrhosis of the liver(liver damage), and self harm. 
+
 
 ```{r}
 #| label: tbl-all_data_one
@@ -75,6 +79,7 @@ head(all_data, n =40) |>
   )
 ```
 
+
 ```{r}
 #| label: tbl-intersect_data_one
 #| tbl-cap: Common Mortality Causes of All Four Years 2000, 2010, 2015, 2019
@@ -89,6 +94,7 @@ head(intersect_all_data, n = 24) |>
     digits = 0, booktabs = TRUE, linesep = ""
   )
 ```
+
 
 ```{r}
 #| label: fig-intersect_all_data_graph
@@ -110,7 +116,8 @@ intersect_all_data|>
 
 ## Basic Summary Statistics
 
-(@tbl-sumsta_korea) is a representation of the (@tbl-intersect_all_data) showing its minimum, mean, maximum, standard deviation, variance, and sample size. The summary statistics shows that the mean of the number of deaths are 18320, with a minimum of 6860, and a maximum of 44109 for a sample size of 24 as the data selected is from (@tbl-intersect_all_data). The standard deviation and variance may be abnormally high because the range of the data is large, in other words, because the mean is 18320, and the maximum is 44109, there is likely a few outliers in the data creating such a high standard deviation and variance. 
+@tbl-sumsta_korea is a representation of the @tbl-intersect_data_one showing its minimum, mean, maximum, standard deviation, variance, and sample size. The summary statistics shows that the mean of the number of deaths are 18320, with a minimum of 6860, and a maximum of 44109 for a sample size of 24 as the data selected is from @tbl-intersect_data_one. The standard deviation and variance may be abnormally high because the range of the data is large, in other words, because the mean is 18320, and the maximum is 44109, there is likely a few outliers in the data creating such a high standard deviation and variance. 
+
 ```{r}
 #| echo: false
 #| eval: true
@@ -124,14 +131,15 @@ datasummary(
 )
 ```
 
+
 # Model
 
 The goal the Bayesian model is to incorporate prior knowledge such as previous studies or analysis into the choice of model. In this paper we use poisson and negative binomial model because both of these models is often used when there occurs a certain number of events in a certain time period or intervals. The poisson distribution is efficient when used for situations where events occur independently over intervals of time. The data represents the cause and the annual number of death for the selected years, the poisson distribution is a measure that is appropriate. However, the poisson distribution is not the perfect fit because it assumes that the mean and the variance are the same whilst @tbl-sumsta_korea shows us there is a significant difference in the mean and standard deviation. Negative binomial distribution is a perfect for situations like this. The negative binomial distribution accounts for additional variability when the data shows evidence of over dispersion. In addition, the negative binomial distribution has an extra parameter that considers the variance being larger than the mean. Thus, executing both models and comparing the results will determine the goodness of the fit. 
 
+
 ## Model set-up
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
-
+The two models that are used in this paper are poisson and negative binomial which are both run in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`. Both models define $y_i$ as the number of deaths to a specific cause. For the poisson model it is followed by the mean parameter $\gamma_i$. The mean parameter $\gamma_i$ is modeled as an exponential of a linear combination of the intercept $\alpha_i$, regression coefficient $\beta_i$ where $i$ is the predictor, and an extra coefficient $\gamma_i$. All three $\alpha_i$, $\beta_i$, and $\gamma_i$ follows a normal distribution with mean 0 and standard deviation of 2.5 as the prior. The negative Binomial model has a mean parameter $\mu_i$ and a dispersion parameter $\phi$. $\mu_i$ is modeled as the exponential of a lienar combination of an intercept $\alpha_i$, coefficients $\beta_i$ which represents the effects of each cause on the number of deaths, and $\gamma_i$ will account for any extra variability in our scenario. The intercept $\alpha_i$ and coefficient of cause $\beta_i$ follow a normal distribution with mean 0 and a standard deviation of 2.5. The dispersion parameter $\phi$ follows an exponential distribution with a rate parameter of 1. In summary, both poisson and negative binomial models work towards predicting the number of deaths based on the different causes assuming each cause has a coefficient affecting the number of deaths. 
 
 
 \begin{align}
@@ -142,7 +150,6 @@ y_i &\sim \text{Poisson}(\lambda_i) \quad \text{(1)} \\
 \gamma_i &\sim \text{Normal}(0, 2.5) \quad \text{(5)} \\
 \end{align}
 
-
 \begin{align}
 y_i &\sim \text{NegBinomial}(\mu_i, \phi) \quad \text{(1)} \\
 \mu_i &= \exp(\alpha + \beta_i + \gamma_i) \quad \text{(2)} \\
@@ -152,15 +159,10 @@ y_i &\sim \text{NegBinomial}(\mu_i, \phi) \quad \text{(1)} \\
 \phi &\sim \text{Exponential}(1) \quad \text{(6)}
 \end{align}
 
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
-
 
 ### Model justification
 
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
-
+Applying the information from @tbl-intersect_data_one, it is difficult to generalize whether there would be a positive or negative correlation between the number of deaths and its cause. This is because every year there is a different number of deaths from the same cause. For example, from @fig-intersect_all_data_graph, we can expect that stroke would have negative correlation coefficient because the annual number of deaths has decreased significantly over the 9 years period. On the other hand, we may predict a positive correlation coefficient for the causes like heart disease and lung cancer as they have been showing an increase trend in the number of deaths since 2000 to 2019. It may be difficult to exactly predict how self harm, liver cancer, and stomach cancer without the actual calculations being done due to the ambiguity the data shows.
 
 # Results
 

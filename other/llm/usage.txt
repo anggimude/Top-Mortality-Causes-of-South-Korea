@@ -180,7 +180,21 @@ To assess the goodness of fit, it's essential to compare the observed data with 
 
 Remember that model selection should also consider the specific characteristics of your data and the assumptions of each model. It's good practice to explore alternative models and assess their appropriateness based on both statistical measures and domain knowledge.
 
+\begin{align}
+y_i &\sim \text{Poisson}(\lambda_i) \quad \text{(1)} \\
+\lambda_i &= \exp(\alpha + \beta_i + \gamma_i) \quad \text{(2)} \\
+\alpha &\sim \text{Normal}(0, 2.5) \quad \text{(3)} \\
+\beta_i &\sim \text{Normal}(0, 2.5) \quad \text{(4)} \\
+\gamma_i &\sim \text{Normal}(0, 2.5) \quad \text{(5)} \\
+\end{align}
 
 
-
+\begin{align}
+y_i &\sim \text{NegBinomial}(\mu_i, \phi) \quad \text{(1)} \\
+\mu_i &= \exp(\alpha + \beta_i + \gamma_i) \quad \text{(2)} \\
+\alpha &\sim \text{Normal}(0, 2.5) \quad \text{(3)} \\
+\beta_i &\sim \text{Normal}(0, 2.5) \quad \text{(4)} \\
+\gamma_i &\sim \text{Normal}(0, 2.5) \quad \text{(5)} \\
+\phi &\sim \text{Exponential}(1) \quad \text{(6)}
+\end{align}
 
