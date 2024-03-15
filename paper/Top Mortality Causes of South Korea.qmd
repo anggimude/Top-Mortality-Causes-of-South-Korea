@@ -37,8 +37,8 @@ library(broom.mixed)
 
 # Read data
 
-all_data <- read_csv("~/Top Mortality Causes South Korea/data/cleaned_data/all_data.csv")
-intersect_all_data <- read_csv("~/Top Mortality Causes South Korea/data/cleaned_data/intersect_all_data.csv")
+all_data <- read_csv("~/Top Mortality Causes South Korea/data/analysis_data/all_data.csv")
+intersect_all_data <- read_csv("~/Top Mortality Causes South Korea/data/analysis_data/intersect_all_data.csv")
 
 ```
 
