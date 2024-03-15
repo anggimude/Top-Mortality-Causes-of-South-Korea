@@ -1,6 +1,6 @@
 ---
 title: "Top 10 Mortality Causes for Republic of Korea of the years 2000, 2010, 2015, 2019"
-subtitle: "Poisson and Negative Bionimal Modelling of Annual Death Number and Cause"
+subtitle: "Poisson and Negative Bionimal Modelling of Annual Death Number and its Cause"
 author: 
   - Hyuk Jang
 thanks: "Code and data are available at: https://github.com/anggimude/Top-Mortality-Causes-of-South-Korea"
@@ -10,6 +10,7 @@ abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 format: pdf
 number-sections: true
 toc: true
+header-includes: \usepackage{placeins}
 output:
   bookdown::pdf_document2
 bibliography: references.bib
@@ -34,11 +35,13 @@ library(kableExtra)
 library(gt)
 library(readr)
 library(broom.mixed)
+library(knitr)
 
 # Read data
 
 all_data <- read_csv("~/Top Mortality Causes South Korea/data/analysis_data/all_data.csv")
 intersect_all_data <- read_csv("~/Top Mortality Causes South Korea/data/analysis_data/intersect_all_data.csv")
+merged_selected <- read_csv("~/Top Mortality Causes South Korea/data/analysis_data/merged_selected.csv")
 
 ```
 
@@ -93,6 +96,8 @@ head(intersect_all_data, n = 24) |>
 #| label: fig-intersect_all_data_graph
 #| fig-cap: Line Graph of Common Mortality Causes of South Korea
 #| echo: false
+#| warning: false
+#| message: false
 
 intersect_all_data|>
   ggplot(aes(x = Year, y = Deaths, color = Cause)) +
@@ -106,11 +111,12 @@ intersect_all_data|>
 
 ```
 
+
 ## Basic Summary Statistics
 
 @tbl-sumsta_korea is a representation of the @tbl-intersect_data_one showing its minimum, mean, maximum, standard deviation, variance, and sample size. The summary statistics shows that the mean of the number of deaths are 18320, with a minimum of 6860, and a maximum of 44109 for a sample size of 24 as the data selected is from @tbl-intersect_data_one. The standard deviation and variance may be abnormally high because the range of the data is large, in other words, because the mean is 18320, and the maximum is 44109, there is likely a few outliers in the data creating such a high standard deviation and variance.
 
-
+\FloatBarrier
 ```{r}
 #| echo: false
 #| eval: true
@@ -184,7 +190,7 @@ coef_short_names <-
     "CauseSelf-harm" = "Self Harm",
     "CauseStomach cancer" = "Stomach Cancer",
     "CauseStroke" = "Stroke",
-    "CauseTrachea, bronchus, lung cancers" = "Trachea, Bronchus, Lung Cancer"
+    "CauseTrachea, bronchus, lung cancers" = "TBL Cancer"
   )
 
 modelsummary(
@@ -197,7 +203,7 @@ modelsummary(
 ```
 
 
-@tbl-poisson_sum_model represents the summary of the poisson model. It has an intercept of 10.105 which we can interpret as there will be 10 deaths annually from other factors. Stomach and liver cancer display a strong negative correlation coefficient each -0.826, and -0.736 respectively. Self harm also has a quite strong negative correlation coefficient -0.621. This implies that the model predicts that there will be a decrease in the log count of deaths for these causes, in short, there will be a decrease in the annual number of deaths for causes with a negative correlation coefficient when all else is held the same. Trachea, bronchus, lung cancer has a relatively weaker negative coefficient compared to the other causes mentioned above but it is not a negligible number -0.349. Stroke is interesting because from @fig-intersect_all_data_graph, we expected the coefficient to be strongly negative but it turns out to be slightly positive 0.286. For an unknown reason, the model is predicting that there will be an increase in the annual number of deaths from stroke in the near future. The poisson model has a very low log likelihood of -8157.665 implying the model may be a good fit. However, when we look at the values for LOOIC, WAIC, and RMSE, the values are extremely high each 17671.3, 22572.8, and 3830.21 which makes this model results quite unreliable. 
+@tbl-poisson_sum_model represents the summary of the poisson model. It has an intercept of 10.105 which we can interpret as there will be 10 deaths annually from other factors. Stomach and liver cancer display a strong negative correlation coefficient each -0.826, and -0.736 respectively. Self harm also has a quite strong negative correlation coefficient -0.621. This implies that the model predicts that there will be a decrease in the log count of deaths for these causes, in short, there will be a decrease in the annual number of deaths for causes with a negative correlation coefficient when all else is held the same. Trachea, bronchus, lung(TBL) cancer has a relatively weaker negative coefficient compared to the other causes mentioned above but it is not a negligible number -0.349. Stroke is interesting because from @fig-intersect_all_data_graph, we expected the coefficient to be strongly negative but it turns out to be slightly positive 0.286. For an unknown reason, the model is predicting that there will be an increase in the annual number of deaths from stroke in the near future. The poisson model has a very low log likelihood of -8157.665 implying the model may be a good fit. However, when we look at the values for LOOIC, WAIC, and RMSE, the values are extremely high each 17671.3, 22572.8, and 3830.21 which makes this model results quite unreliable. 
 
 
 ## Negative binomial model results
@@ -216,7 +222,7 @@ coef_short_names <-
     "CauseSelf-harm" = "Self Harm",
     "CauseStomach cancer" = "Stomach Cancer",
     "CauseStroke" = "Stroke",
-    "CauseTrachea, bronchus, lung cancers" = "Trachea, Bronchus, Lung Cancer"
+    "CauseTrachea, bronchus, lung cancers" = "TBL Cancer"
   )
 
 modelsummary(
@@ -229,10 +235,10 @@ modelsummary(
 ```
 
 
-@tbl-neg_bin_sum_model displays the results of the negative binomial test. Looking into the results, there is one thing different compared to what saw from @tbl-poisson_sum_model. The negative binomial model includes the standard error in parentheses which indicates uncertainty or variability and smaller standard error implies more precision. The intercept is 10.102 with a standard error of 0.190 suggesting the intercept is accurate. Liver cancer, self harm, stomach cancer, and trachea bronchus lung cancer is showing a negative correlation coefficient each of which is -0.726, -0.610, -0.814, and -0.314. Each has a standard error of 0.266, 0.268, 0.276, 0.272. Liver cancer, self harm, and stomach cancer exhibit the strongest negative correlation coefficient in which we can interpret as in the future, there will be a significant decrease in the number of deaths from these causes if all else is equal. Trachea, bronchus, lung cancer show a relatively weaker correlation coefficient which implies that it is likely that there will be a small decrease in the number of deaths in the future. Stroke is the only cause that has a positive correlation coefficient 0.296 with a standard error of 0.274. We can say that there is a high probability that there will be a slight increase in the number of deaths caused by stroke in the future. The log likelihood is -237.44 suggesting the results of this model is accurate. The LOOIC and WAIC are relatively lower than the ones from @tbl-poisson_sum_model encourages that the negative binomial model is a better fit than the poisson model. Since the RMSE is quite similar, we can think that the negative binomial model is a better fit than the poisson model which makes the results from the negative binomial more accurate. 
+@tbl-neg_bin_sum_model displays the results of the negative binomial test. Looking into the results, there is one thing different compared to what saw from @tbl-poisson_sum_model. The negative binomial model includes the standard error in parentheses which indicates uncertainty or variability and smaller standard error implies more precision. The intercept is 10.102 with a standard error of 0.190 suggesting the intercept is accurate. Liver cancer, self harm, stomach cancer, and TBL cancer is showing a negative correlation coefficient each of which is -0.726, -0.610, -0.814, and -0.314. Each has a standard error of 0.266, 0.268, 0.276, 0.272. Liver cancer, self harm, and stomach cancer exhibit the strongest negative correlation coefficient in which we can interpret as in the future, there will be a significant decrease in the number of deaths from these causes if all else is equal. TBL cancer show a relatively weaker correlation coefficient which implies that it is likely that there will be a small decrease in the number of deaths in the future. Stroke is the only cause that has a positive correlation coefficient 0.296 with a standard error of 0.274. We can say that there is a high probability that there will be a slight increase in the number of deaths caused by stroke in the future. The log likelihood is -237.44 suggesting the results of this model is accurate. The LOOIC and WAIC are relatively lower than the ones from @tbl-poisson_sum_model encourages that the negative binomial model is a better fit than the poisson model. Since the RMSE is quite similar, we can think that the negative binomial model is a better fit than the poisson model which makes the results from the negative binomial more accurate. 
 
 
-## Model results summary
+## Model results summary {#sec-model_results}
 
 Comparing the values of the two data sets, and the goodness of fit of the models, we can confirm the validity of our model results. Looking at the two values we from each model for each cause, all causes are in very close proximity. Through this we can see that the results from @tbl-poisson_sum_model and @tbl-neg_bin_sum_model are credible. Thus, we can confidently say that liver cancer has a negative correlation coefficient of -0.73, self harm's coefficient is around -0.61, stomach cancer is around -0.82, stroke is around 0.29, lung cancer is around -0.341 all of which have a standard error around 0.27. These results suggest that the model estimates that liver cancer, self harm, stomach cancer, and lung cancer will have a decrease in the log number of deaths while stroke will have an increase in the log number of deaths.
 
@@ -241,6 +247,7 @@ Comparing the values of the two data sets, and the goodness of fit of the models
 
 @fig-ppcheck_posterior is posterior predictive check and @fig-loo_check is a leave-one-out cross validation. These will be further discussed in @sec-posterior_check.
 
+\FloatBarrier
 ```{r}
 #| eval: true
 #| echo: false
@@ -258,8 +265,7 @@ pp_check(cause_of_death_south_korea_poisson) +
 pp_check(cause_of_death_south_korea_neg_binomial) +
   theme(legend.position = "bottom")
 ```
-
-
+\FloatBarrier
 ```{r}
 #| echo: false
 #| eval: true
@@ -281,15 +287,46 @@ loo_compare(poisson, neg_binomial)
 
 ## First discussion point {#sec-first-point}
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this.
+In @fig-intersect_all_data_graph, we have observed that the number of deaths from stroke has decreased while lung cancer and heart disease has increased. In this section we are interested in why these trends may have occurred. Stroke is known to be a brain attack occurring when something blocks the blood supply to the brain or when a blood vessel in the brain bursts. Stroke has been known to be one of the leading causes of deaths in many countries over the past decade. This is because some can fully recover but the median survival after stoke is approximately 5 to 10 years. Over the 9 year period of our data, there has been significant improvements in healthcare, stroke rehabilitation, and advances in the acute stroke treatment globally has led to a remarkable decrease in the mortality from stroke. However, as we see in @sec-model_results, the model expects an increase in the number of deaths from stroke, this could so because stroke is also caused due to stress and other unknown factors which is why despite the improvement in technology, it is still a leading factor of mortality globally. 
+
+TBL cancer is known to be the second most common cancer globally. Trachea refers to the windpipe and bronchi are the two large tubes that carry air from the trachea to each lungs. TBL cancer refers to any cancer that is caused in these areas of the human body. Smoking is known to be the most important risk factors of lung cancer and thankfully there has been a decrease in the number of smokers over time. This is maybe why the in @sec-model_results, the two models expect a decrease in mortality in from TBL cancer. Then why may @fig-intersect_all_data_graph display an increasing trend. This could be due to the aging population and because of treatment delays. Lung cancer can be cured when found in its early stages, but when found in the later stages, it becomes much more difficult to cure and is likely to lead to death. Such reasons may be why the mortality from lung cancer is one of the highest even within the category of all cancer types not only any mortality causes. 
 
 ## Second discussion point
 
+talk about self harm, how to suicide rates was lower than 50% of road injuries but at one point it has increased
+pin point on a row of a column and pick the value corresponding to deaths for that row.
+
+
+```{r}
+#| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+#| label: fig-comparison_suicide_carinjury
+#| fig-cap: "Comparing the sequel of car injuries and self harm numbers"
+#| fig-pos: "h"
+
+
+merged_selected|>
+  ggplot(aes(x = Year, y = Deaths, color = Cause)) +
+  geom_line() +
+  ggtitle("Comparison between self harm and car injuries") +
+  xlab("Year") +
+  ylab("Annual Number of Deaths in South Korea") +
+  theme_minimal() +
+  scale_x_continuous(breaks = unique(merged_selected$Year)) +
+  theme_minimal()
+
+```
+
 ## Third discussion point
+
+ talk about less common data
 
 ## Weaknesses and next steps
 
 Weaknesses and next steps should also be included.
+next step talking about how the relseae of this paper may let people understand and be shocked from the data because  normally people don't get to see a graph will lots of the top causes of death plotted over time and thus don't realize it is more serious than what people think and be more aware of their health and surroundings. 
 
 \newpage
 
@@ -316,3 +353,30 @@ In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. Th
 \newpage
 
 # References
+
+Arel-Bundock V (2022). “modelsummary: Data and Model Summaries in R.”
+  _Journal of Statistical Software_, *103*(1), 1-23.
+  doi:10.18637/jss.v103.i01 <https://doi.org/10.18637/jss.v103.i01>.
+  
+Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome to the tidyverse.” Journal of Open Source Software, 4(43), 1686. doi:10.21105/joss.01686.
+
+Wickham H, François R, Henry L, Müller K, Vaughan D (2023). dplyr: A Grammar of Data Manipulation. R package version 1.1.4, https://github.com/tidyverse/dplyr, https://dplyr.tidyverse.org.
+
+Goodrich B, Gabry J, Ali I & Brilleman S. (2020). rstanarm: Bayesian applied regression modeling via Stan. R package version 2.21.1 https://mc-stan.org/rstanarm.
+
+H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
+
+Gabry J, Mahr T (2024). “bayesplot: Plotting for Bayesian Models.” R package version 1.11.0, https://mc-stan.org/bayesplot/.
+
+Lüdecke D, Ben-Shachar M, Patil I, Makowski D (2020). “Extracting, Computing and Exploring the Parameters of Statistical Models using R.” Journal of Open Source Software, 5(53), 2445. doi:10.21105/joss.02445.
+
+Robinson D, Hayes A, Couch S (2023). broom: Convert Statistical Objects into Tidy Tibbles. https://broom.tidymodels.org/, https://github.com/tidymodels/broom.
+
+Hao Zhu. kableExtra: Construct Complex Table with ’kable’ and Pipe Syntax, 2020. URL https://CRAN.Rproject.org/package=kableExtra. R package version 1.3.1.
+
+Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J, Brevoort K (2024). gt: Easily Create Presentation-Ready Display Tables. R package version 0.10.1.9000, https://github.com/rstudio/gt, https://gt.rstudio.com.
+
+Wickham H, Hester J, Bryan J (2024). readr: Read Rectangular Text Data. R package version 2.1.5, https://github.com/tidyverse/readr, https://readr.tidyverse.org.
+
+Bolker B, Robinson D (2022). broom.mixed: Tidying Methods for Mixed Models. R package version 0.2.9.4, https://cran.r-project.org/package=broom.mixed.
+

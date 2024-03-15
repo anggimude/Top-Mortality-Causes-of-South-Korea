@@ -66,7 +66,7 @@ coef_short_names <-
     "CauseSelf-harm" = "Self Harm",
     "CauseStomach cancer" = "Stomach Cancer",
     "CauseStroke" = "Stroke",
-    "CauseTrachea, bronchus, lung cancers" = "Trachea, Bronchus, Lung Cancer"
+    "CauseTrachea, bronchus, lung cancers" = "TBL Cancer"
   )
 
 # Poisson Model summary

@@ -79,16 +79,56 @@ all_data <- rbind(
   clean_korea_2019[1:10, ]
 )
 
+# Find causes appearing at least twice
 common_all_data <- all_data |>
   group_by(Cause) |>
   filter(n() > 1)|>
   select(-Ranking, -Death_rate)
 
+# Find causes appearing in all 4 years
 intersect_all_data <- all_data |>
   group_by(Cause) |>
   filter(n() > 3)|>
   select(-Ranking, -Death_rate)
 
+# select data for comparison for year 2000
+selected_2000 <- korea_2000 |>
+  filter(
+    Cause %in% c("Road injury", "Self-harm")
+  )|>
+  select(Cause, Deaths)
+  
+# For 2010
+selected_2010 <- korea_2010 |>
+  filter(
+    Cause %in% c("Road injury", "Self-harm")
+  )|>
+  select(Cause, Deaths)
+
+# For 2015
+selected_2015 <- korea_2015 |>
+  filter(
+    Cause %in% c("Road injury", "Self-harm")
+  )|>
+  select(Cause, Deaths)
+
+# For 2019
+selected_2019 <- korea_2019 |>
+  filter(
+    Cause %in% c("Road injury", "Self-harm")
+  )|>
+  select(Cause, Deaths)
+
+# Merging the comparison data for the 4 years
+merged_selected <- bind_rows(
+  selected_2000 |> mutate(Year = 2000),
+  selected_2010 |> mutate(Year = 2010),
+  selected_2015 |> mutate(Year = 2015),
+  selected_2019 |> mutate(Year = 2019)
+)
+
+# writing and saving the data as csv in analysis data
 write_csv(all_data, "~/Top Mortality Causes South Korea/data/analysis_data/all_data.csv")
 write_csv(intersect_all_data, "~/Top Mortality Causes South Korea/data/analysis_data/intersect_all_data.csv")
-
+write_csv(merged_selected, "~/Top Mortality Causes South Korea/data/analysis_data/merged_selected.csv")
+write_csv(common_all_data, "~/Top Mortality Causes South Korea/data/analysis_data/common_all_data.csv")
