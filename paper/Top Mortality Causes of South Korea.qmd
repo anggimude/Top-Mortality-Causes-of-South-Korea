@@ -55,13 +55,13 @@ The remainder of this paper is structured as follows. @sec-data....
 
 ## Raw Data
 
-The data used in this paper is derived from WHO(WHO) and was downloaded from the WHO Mortality Database. WHO(WHO) provides data for years country-level Global Health Estimates(GHE2019) for the years 2000-2019. Because the years that have estimates of a list provided of the cause of death categories in terms of International Classification of Diseases, Tenth Revision(ICD-10) in terms of a summary table of number of deaths by cause, age, and sex for WHO(WHO) member states for the years are 2000, 2010, 2015, 2019; the data for these four years are cleaned and analyzed for this paper. The analysis of deaths by cause of the raw data is executed for the age groups from 5 to 85+. This paper looks into the data for Republic of Korea as the author is South Korean but also because WHO methods and data sources(citation) certifies a high quality of data. The raw data includes columns such as code, cause, IS03, year, sex, age group, population, deaths, death rate per 100000 population, DALY, DALY rate per 100000 population.
+The data used in this paper is derived from WHO(@who2021global) and was downloaded from the WHO Mortality Database(@who2021global). WHO(@who2021global) provides data for years country-level Global Health Estimates(GHE2019) for the years 2000-2019. Because the years that have estimates of a list provided of the cause of death categories in terms of International Classification of Diseases, Tenth Revision(ICD-10) in terms of a summary table of number of deaths by cause, age, and sex for WHO member states for the years are 2000, 2010, 2015, 2019; the data for these four years are cleaned and analyzed for this paper. The analysis of deaths by cause of the raw data is executed for the age groups from 5 to 85+. This paper looks into the data for Republic of Korea as the author is South Korean but also because WHO methods and data sources(@who2020methods) certifies a high quality of data. The raw data includes columns such as code, cause, IS03, year, sex, age group, population, deaths, death rate per 100000 population, DALY, DALY rate per 100000 population.
 
 The cleaning, testing, and modelling of the data for this paper was done through R [@citeR] with the aid of the following packages: tidyverse [@citetidyverse], dplyr [@citedplyr], rstanarm [@citerstanarm], ggplot2 [@citeggplot2], modelsummary [@citemodelsummary], bayesplot [@citebayesplot], parameters [@citeparameters], broom [@citebroom], kableExtra [@citekableExtra], gt [@citegt], readr [@citereadr], broom.mixed [@citebroommixed].
 
 ## Cleaned Data
 
-The data that is needed for this paper is year, cause, and number of deaths, so the raw data is cleaned to contain only the three columns we need. Because we are looking into the top 10 mortality in this paper, we rank the causes based on its number of deaths and merge it into @tbl-all_data_one. Now that the cleaning is done we can see the top 10 causes of deaths for the years 2000, 2010, 2015, and 2019, however, this isn't enough because to make a graph and create a poisson and negative binomial model, we must find the causes that are common in all of the years. @tbl-intersect_data_one represents the table in which only the causes that appear among all the years descending order of ranking. Now we can recognize the six main causes of death in South Korea is stroke, Ischaemic Heart Disease, Stomach Cancer, Trachea Bronchus Lung Cancer, Liver Cancer, and Self Harm. Looking at @fig-intersect_all_data_graph, we can see some interesting trends. For example, there is a plunge in the annual number of deaths from stroke over the 19 year span. On the other hand, there has been increases for the causes of Ischaemic heart disease and Trachea, Bronchus, Lung cancer. There is a slight decrease in stomach cancer while liver cancer didn't fluctuate as much. Self harm is interesting because Korea is known to have the highest suicide rates out of all the OECD countries(Citation), and we see an increase in the number deaths from self harm has increased rapidly from 2000 to 2010 and a small decrease from 2010 to 2015. It seems like the death numbers from self harm has plateaued with a very slow rate of increase. In general, the top 10 most common causes of deaths are stroke, heart disease, stomach cancer, lung cancer, road injury, liver cancer, diabetes, Cirrhosis of the liver(liver damage), and self harm.
+The data that is needed for this paper is year, cause, and number of deaths, so the raw data is cleaned to contain only the three columns we need. Because we are looking into the top 10 mortality in this paper, we rank the causes based on its number of deaths and merge it into @tbl-all_data_one. Now that the cleaning is done we can see the top 10 causes of deaths for the years 2000, 2010, 2015, and 2019, however, this isn't enough because to make a graph and create a poisson and negative binomial model, we must find the causes that are common in all of the years. @tbl-intersect_data_one represents the table in which only the causes that appear among all the years descending order of ranking. Now we can recognize the six main causes of death in South Korea is stroke, Ischaemic Heart Disease, Stomach Cancer, Trachea Bronchus Lung Cancer, Liver Cancer, and Self Harm. Looking at @fig-intersect_all_data_graph, we can see some interesting trends. For example, there is a plunge in the annual number of deaths from stroke over the 19 year span. On the other hand, there has been increases for the causes of Ischaemic heart disease and Trachea, Bronchus, Lung cancer. There is a slight decrease in stomach cancer while liver cancer didn't fluctuate as much. Self harm is interesting because Korea is known to have the highest suicide rates out of all the OECD countries(@oecd2013change), and we see an increase in the number deaths from self harm has increased rapidly from 2000 to 2010 and a small decrease from 2010 to 2015. It seems like the death numbers from self harm has plateaued with a very slow rate of increase. In general, the top 10 most common causes of deaths are stroke, heart disease, stomach cancer, lung cancer, road injury, liver cancer, diabetes, Cirrhosis of the liver(liver damage), and self harm.
 
 ```{r}
 #| label: tbl-all_data_one
@@ -404,4 +404,39 @@ Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J, Brevoort K (2024). gt
 Wickham H, Hester J, Bryan J (2024). readr: Read Rectangular Text Data. R package version 2.1.5, https://github.com/tidyverse/readr, https://readr.tidyverse.org.
 
 Bolker B, Robinson D (2022). broom.mixed: Tidying Methods for Mixed Models. R package version 0.2.9.4, https://cran.r-project.org/package=broom.mixed.
+
+Global health estimates: Leading causes of death. (2021). Who.int. https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-leading-causes-of-death
+
+WHO. (2020). WHO methods and data sources for country-level causes of death 2000-2019. https://cdn.who.int/media/docs/default-source/gho-documents/global-health-estimates/ghe2019_cod_methods.pdf?sfvrsn=37bcfacc_5
+
+Republic of Korea data | World Health Organization. (2020). Datadot. https://data.who.int/countries/410
+
+Se Hee Jung. (2022). Stroke Rehabilitation Fact Sheet in Korea. Annals of Rehabilitation Medicine, 46(1), 1–8. https://doi.org/10.5535/arm.22001
+
+Bonita, R., & Beaglehole, R. (1996). The Enigma of the Decline in Stroke Deaths in the United States. Stroke, 27(3), 370–372. https://doi.org/10.1161/01.str.27.3.370
+
+CDC. (2023, May 4). About Stroke. Centers for Disease Control and Prevention. https://www.cdc.gov/stroke/about.htm#:~:text=A%20stroke%2C%20sometimes%20called%20a,brain%20become%20damaged%20or%20die
+
+Fang, M. C., Go, A. S., Chang, Y., Borowsky, L. H., Pomernacki, N. K., Udaltsova, N., & Singer, D. E. (2014). Long-term survival after ischemic stroke in patients with atrial fibrillation. Neurology, 82(12), 1033–1037. https://doi.org/10.1212/wnl.0000000000000248
+
+Zhou, B., Zang, R., Zhang, M., Song, P., Liu, L., Bie, F., Peng, Y., Bai, G., & Gao, S. (2022). Worldwide burden and epidemiological trends of tracheal, bronchus, and lung cancer: A population-based study. EBioMedicine, 78, 103951–103951. https://doi.org/10.1016/j.ebiom.2022.103951
+
+Clinic, C. (2021). Bronchi: What Are They, Function, Anatomy & Conditions. Cleveland Clinic. https://my.clevelandclinic.org/health/body/21607-bronchi
+
+Park, S., Choi, C.-M., Hwang, S.-S., Choi, Y.-L., Hyae Young Kim, Kim, Y.-C., Young Tae Kim, Ho Yun Lee, Si Yeol Song, & Ahn, M.-J. (2021). Lung Cancer in Korea. Journal of Thoracic Oncology, 16(12), 1988–1993. https://doi.org/10.1016/j.jtho.2021.09.007
+
+Han, K.-T., Kim, W., Song, A., Yeong Jun Ju, Choi, D.-W., & Kim, S. (2021). Is time-to-treatment associated with higher mortality in Korean elderly lung cancer patients? Health Policy, 125(8), 1047–1053. https://doi.org/10.1016/j.healthpol.2021.06.004
+
+Topic: Suicide in South Korea. (2023). Statista; Statista. https://www.statista.com/topics/8622/suicide-in-south-korea/#topicOverview
+
+Wikipedia Contributors. (2024, March 8). Suicide in South Korea. Wikipedia; Wikimedia Foundation. https://en.wikipedia.org/wiki/Suicide_in_South_Korea
+
+Ha, S. (2023, December 22). S Korea suicide: “When I found my brother’s body, my heart turned to winter.” Bbc.com; BBC News. https://www.bbc.com/news/world-asia-66400158
+
+Wikipedia Contributors. (2024, January 15). Lower respiratory tract infection. Wikipedia; Wikimedia Foundation. https://en.wikipedia.org/wiki/Lower_respiratory_tract_infection
+
+Liu, Y., Zhang, Y., Zhao, W., Liu, X., Hu, F., & Dong, B. (2019). Pharmacotherapy of Lower Respiratory Tract Infections in Elderly—Focused on Antibiotics. Frontiers in Pharmacology, 10. https://doi.org/10.3389/fphar.2019.01237
+
+Figure 2. Change in suicide rates, 2000 and 2011 (or nearest year available). (2013). https://www.oecd.org/els/health-systems/MMHC-Country-Press-Note-Korea.pdf
+
 
