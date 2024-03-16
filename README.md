@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repo provides students with a foundation for their own projects associated with *Telling Stories with Data*. You do not need every aspect for every paper and you should delete aspects that you do not need.
+This repository looks into top mortality causes of South Korea. There are various causes of deaths that are prevalent and yet we do not really care about it in our daily lives. It is crucial to note the top causes of mortality not just for governments or healthcare but also so that we citizens can work together to decrease annual number of deaths for causes that can be prevented. This paper will dive into the top mortality causes of Republic of Korea so that we can create poisson and negative binomial models to predict which causes will have an increase or decrease in the number of annual deaths when all other conditions are kept the same.
 
 To use this folder, click the green "Code" button", then "Download ZIP". Move the downloaded folder to where you want to work on your own computer, and then modify it to suit.
 

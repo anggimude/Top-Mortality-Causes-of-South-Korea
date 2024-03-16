@@ -6,7 +6,7 @@ author:
 thanks: "Code and data are available at: https://github.com/anggimude/Top-Mortality-Causes-of-South-Korea"
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "There are various causes of deaths that are prevalent and yet we do not really care about it in our daily lives. It is crucial to note the top causes of mortality not just for governments or healthcare but also so that we citizens can work together to decrease annual number of deaths for causes that can be prevented. This paper will dive into the top mortality causes of the Republic of Korea so that we can create poisson and negative binomial models to predict which causes will have an increase or decrease in the number of annual deaths when all other conditions are kept the same."
 format: pdf
 number-sections: true
 toc: true
@@ -49,7 +49,13 @@ common_all_data <- read_csv("~/Top Mortality Causes South Korea/data/analysis_da
 
 # Introduction
 
-The remainder of this paper is structured as follows. @sec-data....
+Death is defined as the permanent halt of all biological processes that maintain an organism. Death is inevitable to all organisms including humans, and the improvement of healthcare has allowed us to disregard many causes of deaths compared to the past. Though there still exists numerous causes to deaths in our daily lives that we don't realize that and this paper will look into the top mortality causes of the Republic of Korea. Many papers and researches tend to generalize the cause for example, instead of looking into specific cancers, they would tend to look at the annual number of deaths from all cancer types. However, we are interested in the exact causes of deaths of South Korea, not the generalized cause and its numbers. 
+
+As of 2019, the life expectancy of South Korea was 83.23 years(@datacommons2021southkorea) compared to 75.91 in 2000(@datacommons2021southkorea) thanks to the improvement of healthcare and technology. We see a large change in the life expectancy over the 19 years, which was an increase by 7.32 years. This brings about a question. How different would the annual number of deaths by cause change look like over the 19 year period. In 2000, Korea had a population of around 46.7 million(@populationpyramid2000), and as of 2019 it was around 51.8 million(@populationpyramid2019). In the 2000, most of the population was structured around the ages of 14 ~ 44, and in 2019, it has changed to 20 ~ 64. Overall, over the period of time we are interested in, the population structure has shifted from a young to aging society. From this information, we can expect that there would be a large increase in the number of deaths from causes that are correlated to older ages. 
+
+This paper will use poisson and negative binomial modelling to predict which causes of mortality may have an increase or decrease in annual deaths when all other conditions are unchanged. The results of the two models will be compared to check whether the results are credible to make conclusions. We want to analyze the change in demographics for all ages and gender, thus, we do not make any adjustments to the raw data obtained from WHO(@who2021global) in age or gender; instead we use the whole age and gender population. Initially we look into the top 10 causes of mortality for the selected years: 2000, 2010, 2015, 2019, then for further analysis and modelling we use the six common causes of mortality for all chosen years. 
+
+This paper has 4 sections in total not including the introduction. In @sec-data we look at the data that used to carry out the reports including tables and graphs of cleaned data that will be used for the models and the summary statistics. In the next section, we discuss about the models that will be used to analyze our cleaned data, how it is set up and the justifications of it. Next we display and examine the results obtained from the models including tables of the model summaries which helps us make predictions. Lastly, we make final discussions of our results and research based on each cause and dive into some weaknesses that our paper has. In addition, we explore some next steps we or anyone else interested is willing to take after reading this paper. 
 
 # Data {#sec-data}
 
@@ -237,7 +243,7 @@ modelsummary(
 ```
 
 
-@tbl-neg_bin_sum_model displays the results of the negative binomial test. Looking into the results, there is one thing different compared to what saw from @tbl-poisson_sum_model. The negative binomial model includes the standard error in parentheses which indicates uncertainty or variability and smaller standard error implies more precision. The intercept is 10.102 with a standard error of 0.190 suggesting the intercept is accurate. Liver cancer, self harm, stomach cancer, and TBL cancer is showing a negative correlation coefficient each of which is -0.726, -0.610, -0.814, and -0.314. Each has a standard error of 0.266, 0.268, 0.276, 0.272. Liver cancer, self harm, and stomach cancer exhibit the strongest negative correlation coefficient in which we can interpret as in the future, there will be a significant decrease in the number of deaths from these causes if all else is equal. TBL cancer show a relatively weaker correlation coefficient which implies that it is likely that there will be a small decrease in the number of deaths in the future. Stroke is the only cause that has a positive correlation coefficient 0.296 with a standard error of 0.274. We can say that there is a high probability that there will be a slight increase in the number of deaths caused by stroke in the future. The log likelihood is -237.44 suggesting the results of this model is accurate. The LOOIC and WAIC are relatively lower than the ones from @tbl-poisson_sum_model encourages that the negative binomial model is a better fit than the poisson model. Since the RMSE is quite similar, we can think that the negative binomial model is a better fit than the poisson model which makes the results from the negative binomial more accurate. 
+@tbl-neg_bin_sum_model displays the results of the negative binomial test. Looking into the results, there is one thing different compared to what we saw from @tbl-poisson_sum_model. The negative binomial model includes the standard error in parentheses which indicates uncertainty or variability and smaller standard error implies more precision. The intercept is 10.102 with a standard error of 0.190 suggesting the intercept is accurate. Liver cancer, self harm, stomach cancer, and TBL cancer is showing a negative correlation coefficient each of which is -0.726, -0.610, -0.814, and -0.314. Each has a standard error of 0.266, 0.268, 0.276, 0.272. Liver cancer, self harm, and stomach cancer exhibit the strongest negative correlation coefficient in which we can interpret as in the future, there will be a significant decrease in the number of deaths from these causes if all else is equal. TBL cancer show a relatively weaker correlation coefficient which implies that it is likely that there will be a small decrease in the number of deaths in the future. Stroke is the only cause that has a positive correlation coefficient 0.296 with a standard error of 0.274. We can say that there is a high probability that there will be a slight increase in the number of deaths caused by stroke in the future. The log likelihood is -237.44 suggesting the results of this model is accurate. The LOOIC and WAIC are relatively lower than the ones from @tbl-poisson_sum_model encourages that the negative binomial model is a better fit than the poisson model. Since the RMSE is quite similar, we can think that the negative binomial model is a better fit than the poisson model which makes the results from the negative binomial more accurate. 
 
 
 ## Model results summary {#sec-model_results}
@@ -345,7 +351,7 @@ common_all_data|>
 
 ```
 
-Going back into the initial purpose of the paper; looking into the top ten mortality causes of South Korea. Due to the modelling, we were only able look deep into the six common causes instead. Thus, in this section it would be more adequate to get back closer to the initial question but make it interesting as well, we look into mortality causes that appear in at least two of the four years. @fig-less_common_data is the representation of the data that has been cleaned to analyze the new question. Now we have twelve causes to look into instead of the six we had. In addition to the ones we had there are Alzheimer disease, chronic obstructive pulmonary disease(COPD), colon and rectum cancer, diabetes, kidney disease, and lower respiratory infections. Colon and rectum cancer, diabetes, kidney disease, and Alzheimer disease do not exhibit much fluctuations. It is worth noting the steep increase in lower respiratory infections over the 9 year span. One of the main reasons of this trend is also due to aging society. Lower respiratory infection is known to have increased risk of developing when you are older. As the human body gets older, our respiratory system becomes more prone to infectious diseases. As a result, when the society is aged in general, it is likely that the number of deaths from lower respiratory infection increases as well. It is crucial to analyze and know about the top causes of mortality in countries because countries can use the data to decide where to invest in to prevent or decrease the number of people dying from certain causes so our general happiness increases from the satisfaction of life. 
+Going back into the initial purpose of the paper; looking into the top mortality causes of South Korea. Due to the modelling, we were only able look deep into the six common causes instead. Thus, in this section it would be more adequate to get back closer to the initial question but make it interesting as well, we look into mortality causes that appear in at least two of the four years. @fig-less_common_data is the representation of the data that has been cleaned to analyze the new question. Now we have twelve causes to look into instead of the six we had. In addition to the ones we had there are Alzheimer disease, chronic obstructive pulmonary disease(COPD), colon and rectum cancer, diabetes, kidney disease, and lower respiratory infections. Colon and rectum cancer, diabetes, kidney disease, and Alzheimer disease do not exhibit much fluctuations. It is worth noting the steep increase in lower respiratory infections over the 9 year span. One of the main reasons of this trend is also due to aging society. Lower respiratory infection is known to have increased risk of developing when you are older. As the human body gets older, our respiratory system becomes more prone to infectious diseases. As a result, when the society is aged in general, it is likely that the number of deaths from lower respiratory infection increases as well. It is crucial to analyze and know about the top causes of mortality in countries because countries can use the data to decide where to invest in to prevent or decrease the number of people dying from certain causes so our general happiness increases from the satisfaction of life. 
 
 ## Weaknesses and next steps
 
@@ -371,7 +377,7 @@ Based on the two checks we can conclude that the negative binomial model fits th
 
 ## Diagnostics
 
-@fig-loo_check is a trace and Rhat plot of the negative binomial and poisson model. The trace plot shows an estimate of the model's predictive performance and helps identify any potential over fitting or under fitting issues. The Raht plot compares the variance within individual Markov chains to the variable between the chains. A value of 1 suggests convergence, while a value greater than 1 suggests lack of convergence.
+@fig-loo_check is a trace and Rhat plot of the negative binomial and poisson model. The trace plot shows an estimate of the model's predictive performance and helps identify any potential over fitting or under fitting issues. The Rhat plot compares the variance within individual Markov chains to the variable between the chains. A value of 1 suggests convergence, while a value greater than 1 suggests lack of convergence.
 
 @fig-loo_check suggests that the negative binomial model is a much better fit for the data than poisson model we have because it has a larger ELPD value and the Rhat plot is much greater for the poisson model proposing lack of convergence.
 
@@ -383,60 +389,67 @@ Arel-Bundock V (2022). “modelsummary: Data and Model Summaries in R.”
   _Journal of Statistical Software_, *103*(1), 1-23.
   doi:10.18637/jss.v103.i01 <https://doi.org/10.18637/jss.v103.i01>.
   
-Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome to the tidyverse.” Journal of Open Source Software, 4(43), 1686. doi:10.21105/joss.01686.
-
-Wickham H, François R, Henry L, Müller K, Vaughan D (2023). dplyr: A Grammar of Data Manipulation. R package version 1.1.4, https://github.com/tidyverse/dplyr, https://dplyr.tidyverse.org.
-
-Goodrich B, Gabry J, Ali I & Brilleman S. (2020). rstanarm: Bayesian applied regression modeling via Stan. R package version 2.21.1 https://mc-stan.org/rstanarm.
-
-H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
-
-Gabry J, Mahr T (2024). “bayesplot: Plotting for Bayesian Models.” R package version 1.11.0, https://mc-stan.org/bayesplot/.
-
-Lüdecke D, Ben-Shachar M, Patil I, Makowski D (2020). “Extracting, Computing and Exploring the Parameters of Statistical Models using R.” Journal of Open Source Software, 5(53), 2445. doi:10.21105/joss.02445.
-
-Robinson D, Hayes A, Couch S (2023). broom: Convert Statistical Objects into Tidy Tibbles. https://broom.tidymodels.org/, https://github.com/tidymodels/broom.
-
-Hao Zhu. kableExtra: Construct Complex Table with ’kable’ and Pipe Syntax, 2020. URL https://CRAN.Rproject.org/package=kableExtra. R package version 1.3.1.
-
-Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J, Brevoort K (2024). gt: Easily Create Presentation-Ready Display Tables. R package version 0.10.1.9000, https://github.com/rstudio/gt, https://gt.rstudio.com.
-
-Wickham H, Hester J, Bryan J (2024). readr: Read Rectangular Text Data. R package version 2.1.5, https://github.com/tidyverse/readr, https://readr.tidyverse.org.
-
 Bolker B, Robinson D (2022). broom.mixed: Tidying Methods for Mixed Models. R package version 0.2.9.4, https://cran.r-project.org/package=broom.mixed.
-
-Global health estimates: Leading causes of death. (2021). Who.int. https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-leading-causes-of-death
-
-WHO. (2020). WHO methods and data sources for country-level causes of death 2000-2019. https://cdn.who.int/media/docs/default-source/gho-documents/global-health-estimates/ghe2019_cod_methods.pdf?sfvrsn=37bcfacc_5
-
-Republic of Korea data | World Health Organization. (2020). Datadot. https://data.who.int/countries/410
-
-Se Hee Jung. (2022). Stroke Rehabilitation Fact Sheet in Korea. Annals of Rehabilitation Medicine, 46(1), 1–8. https://doi.org/10.5535/arm.22001
 
 Bonita, R., & Beaglehole, R. (1996). The Enigma of the Decline in Stroke Deaths in the United States. Stroke, 27(3), 370–372. https://doi.org/10.1161/01.str.27.3.370
 
 CDC. (2023, May 4). About Stroke. Centers for Disease Control and Prevention. https://www.cdc.gov/stroke/about.htm#:~:text=A%20stroke%2C%20sometimes%20called%20a,brain%20become%20damaged%20or%20die
 
-Fang, M. C., Go, A. S., Chang, Y., Borowsky, L. H., Pomernacki, N. K., Udaltsova, N., & Singer, D. E. (2014). Long-term survival after ischemic stroke in patients with atrial fibrillation. Neurology, 82(12), 1033–1037. https://doi.org/10.1212/wnl.0000000000000248
-
-Zhou, B., Zang, R., Zhang, M., Song, P., Liu, L., Bie, F., Peng, Y., Bai, G., & Gao, S. (2022). Worldwide burden and epidemiological trends of tracheal, bronchus, and lung cancer: A population-based study. EBioMedicine, 78, 103951–103951. https://doi.org/10.1016/j.ebiom.2022.103951
-
 Clinic, C. (2021). Bronchi: What Are They, Function, Anatomy & Conditions. Cleveland Clinic. https://my.clevelandclinic.org/health/body/21607-bronchi
 
-Park, S., Choi, C.-M., Hwang, S.-S., Choi, Y.-L., Hyae Young Kim, Kim, Y.-C., Young Tae Kim, Ho Yun Lee, Si Yeol Song, & Ahn, M.-J. (2021). Lung Cancer in Korea. Journal of Thoracic Oncology, 16(12), 1988–1993. https://doi.org/10.1016/j.jtho.2021.09.007
-
-Han, K.-T., Kim, W., Song, A., Yeong Jun Ju, Choi, D.-W., & Kim, S. (2021). Is time-to-treatment associated with higher mortality in Korean elderly lung cancer patients? Health Policy, 125(8), 1047–1053. https://doi.org/10.1016/j.healthpol.2021.06.004
-
-Topic: Suicide in South Korea. (2023). Statista; Statista. https://www.statista.com/topics/8622/suicide-in-south-korea/#topicOverview
-
-Wikipedia Contributors. (2024, March 8). Suicide in South Korea. Wikipedia; Wikimedia Foundation. https://en.wikipedia.org/wiki/Suicide_in_South_Korea
-
-Ha, S. (2023, December 22). S Korea suicide: “When I found my brother’s body, my heart turned to winter.” Bbc.com; BBC News. https://www.bbc.com/news/world-asia-66400158
-
-Wikipedia Contributors. (2024, January 15). Lower respiratory tract infection. Wikipedia; Wikimedia Foundation. https://en.wikipedia.org/wiki/Lower_respiratory_tract_infection
-
-Liu, Y., Zhang, Y., Zhao, W., Liu, X., Hu, F., & Dong, B. (2019). Pharmacotherapy of Lower Respiratory Tract Infections in Elderly—Focused on Antibiotics. Frontiers in Pharmacology, 10. https://doi.org/10.3389/fphar.2019.01237
+Fang, M. C., Go, A. S., Chang, Y., Borowsky, L. H., Pomernacki, N. K., Udaltsova, N., & Singer, D. E. (2014). Long-term survival after ischemic stroke in patients with atrial fibrillation. Neurology, 82(12), 1033–1037. https://doi.org/10.1212/wnl.0000000000000248
 
 Figure 2. Change in suicide rates, 2000 and 2011 (or nearest year available). (2013). https://www.oecd.org/els/health-systems/MMHC-Country-Press-Note-Korea.pdf
 
+Gabry J, Mahr T (2024). “bayesplot: Plotting for Bayesian Models.” R package version 1.11.0, https://mc-stan.org/bayesplot/.
+
+Global health estimates: Leading causes of death. (2021). Who.int. https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-leading-causes-of-death
+
+Goodrich B, Gabry J, Ali I & Brilleman S. (2020). rstanarm: Bayesian applied regression modeling via Stan. R package version 2.21.1 https://mc-stan.org/rstanarm.
+
+Ha, S. (2023, December 22). S Korea suicide: “When I found my brother’s body, my heart turned to winter.” Bbc.com; BBC News. https://www.bbc.com/news/world-asia-66400158
+
+Han, K.-T., Kim, W., Song, A., Yeong Jun Ju, Choi, D.-W., & Kim, S. (2021). Is time-to-treatment associated with higher mortality in Korean elderly lung cancer patients? Health Policy, 125(8), 1047–1053. https://doi.org/10.1016/j.healthpol.2021.06.004
+
+Hao Zhu. kableExtra: Construct Complex Table with ’kable’ and Pipe Syntax, 2020. URL https://CRAN.Rproject.org/package=kableExtra. R package version 1.3.1.
+
+H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
+
+Iannone R, Cheng J, Schloerke B, Hughes E, Lauer A, Seo J, Brevoort K (2024). gt: Easily Create Presentation-Ready Display Tables. R package version 0.10.1.9000, https://github.com/rstudio/gt, https://gt.rstudio.com.
+
+Liu, Y., Zhang, Y., Zhao, W., Liu, X., Hu, F., & Dong, B. (2019). Pharmacotherapy of Lower Respiratory Tract Infections in Elderly—Focused on Antibiotics. Frontiers in Pharmacology, 10. https://doi.org/10.3389/fphar.2019.01237
+
+Lüdecke D, Ben-Shachar M, Patil I, Makowski D (2020). “Extracting, Computing and Exploring the Parameters of Statistical Models using R.” Journal of Open Source Software, 5(53), 2445. doi:10.21105/joss.02445.
+
+Park, S., Choi, C.-M., Hwang, S.-S., Choi, Y.-L., Hyae Young Kim, Kim, Y.-C., Young Tae Kim, Ho Yun Lee, Si Yeol Song, & Ahn, M.-J. (2021). Lung Cancer in Korea. Journal of Thoracic Oncology, 16(12), 1988–1993. https://doi.org/10.1016/j.jtho.2021.09.007
+
+Population Pyramids of the World from 1950 to 2100. (2014). PopulationPyramid.net. https://www.populationpyramid.net/republic-of-korea/2000/
+
+Population Pyramids of the World from 1950 to 2100. (2019). PopulationPyramid.net. https://www.populationpyramid.net/republic-of-korea/2019/
+
+Republic of Korea data | World Health Organization. (2020). Datadot. https://data.who.int/countries/410
+
+Robinson D, Hayes A, Couch S (2023). broom: Convert Statistical Objects into Tidy Tibbles. https://broom.tidymodels.org/, https://github.com/tidymodels/broom.
+
+Se Hee Jung. (2022). Stroke Rehabilitation Fact Sheet in Korea. Annals of Rehabilitation Medicine, 46(1), 1–8. https://doi.org/10.5535/arm.22001
+
+South Korea - Place Explorer - Data Commons. (2021). Datacommons.org. https://datacommons.org/place/country/KOR?utm_medium=explore&mprop=lifeExpectancy&popt=Person&hl=en
+
+Topic: Suicide in South Korea. (2023). Statista; Statista. https://www.statista.com/topics/8622/suicide-in-south-korea/#topicOverview
+
+WHO. (2020). WHO methods and data sources for country-level causes of death 2000-2019. https://cdn.who.int/media/docs/default-source/gho-documents/global-health-estimates/ghe2019_cod_methods.pdf?sfvrsn=37bcfacc_5
+
+Wickham H, Hester J, Bryan J (2024). readr: Read Rectangular Text Data. R package version 2.1.5, https://github.com/tidyverse/readr, https://readr.tidyverse.org.
+
+Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome to the tidyverse.” Journal of Open Source Software, 4(43), 1686. doi:10.21105/joss.01686.
+
+Wickham H, François R, Henry L, Müller K, Vaughan D (2023). dplyr: A Grammar of Data Manipulation. R package version 1.1.4, https://github.com/tidyverse/dplyr, https://dplyr.tidyverse.org.
+
+Wikipedia Contributors. (2024, March 8). Suicide in South Korea. Wikipedia; Wikimedia Foundation. https://en.wikipedia.org/wiki/Suicide_in_South_Korea
+
+Wikipedia Contributors. (2024, January 15). Lower respiratory tract infection. Wikipedia; Wikimedia Foundation. https://en.wikipedia.org/wiki/Lower_respiratory_tract_infection
+
+Wikipedia Contributors. (2024, March 16). Death. Wikipedia; Wikimedia Foundation. https://en.wikipedia.org/wiki/Death
+
+Zhou, B., Zang, R., Zhang, M., Song, P., Liu, L., Bie, F., Peng, Y., Bai, G., & Gao, S. (2022). Worldwide burden and epidemiological trends of tracheal, bronchus, and lung cancer: A population-based study. EBioMedicine, 78, 103951–103951. https://doi.org/10.1016/j.ebiom.2022.103951
 
