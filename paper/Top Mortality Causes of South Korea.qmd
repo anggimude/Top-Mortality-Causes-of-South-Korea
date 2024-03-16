@@ -1,6 +1,6 @@
 ---
-title: "Top 10 Mortality Causes for Republic of Korea of the years 2000, 2010, 2015, 2019"
-subtitle: "Poisson and Negative Bionimal Modelling of Annual Death Number and its Cause"
+title: "Top Mortality Causes for Republic of Korea of the years 2000, 2010, 2015, 2019"
+subtitle: "Poisson and Negative Bionimal Modelling of Annual Death Number and Top 6 Causes"
 author: 
   - Hyuk Jang
 thanks: "Code and data are available at: https://github.com/anggimude/Top-Mortality-Causes-of-South-Korea"
@@ -61,7 +61,7 @@ The cleaning, testing, and modelling of the data for this paper was done through
 
 ## Cleaned Data
 
-The data that is needed for this paper is year, cause, and number of deaths, so the raw data is cleaned to contain only the three columns we need. Because we are looking into the top 10 mortality in this paper, we rank the causes based on its number of deaths and merge it into @tbl-all_data_one. Now that the cleaning is done we can see the top 10 causes of deaths for the years 2000, 2010, 2015, and 2019, however, this isn't enough because to make a graph and create a poisson and negative binomial model, we must find the causes that are common in all of the years. @tbl-intersect_data_one represents the table in which only the causes that appear among all the years descending order of ranking. Now we can recognize the six main causes of death in South Korea is stroke, Ischaemic Heart Disease, Stomach Cancer, Trachea Bronchus Lung Cancer, Liver Cancer, and Self Harm. Looking at @fig-intersect_all_data_graph, we can see some interesting trends. For example, there is a plunge in the annual number of deaths from stroke over the 9 year span. On the other hand, there has been increases for the causes of Ischaemic heart disease and Trachea, Bronchus, Lung cancer. There is a slight decrease in stomach cancer while liver cancer didn't fluctuate as much. Self harm is interesting because Korea is known to have the highest suicide rates out of all the OECD countries(Citation), and we see an increase in the number deaths from self harm has increased rapidly from 2000 to 2010 and a small decrease from 2010 to 2015. It seems like the death numbers from self harm has plateaued with a very slow rate of increase. In general, the top 10 most common causes of deaths are stroke, heart disease, stomach cancer, lung cancer, road injury, liver cancer, diabetes, Cirrhosis of the liver(liver damage), and self harm.
+The data that is needed for this paper is year, cause, and number of deaths, so the raw data is cleaned to contain only the three columns we need. Because we are looking into the top 10 mortality in this paper, we rank the causes based on its number of deaths and merge it into @tbl-all_data_one. Now that the cleaning is done we can see the top 10 causes of deaths for the years 2000, 2010, 2015, and 2019, however, this isn't enough because to make a graph and create a poisson and negative binomial model, we must find the causes that are common in all of the years. @tbl-intersect_data_one represents the table in which only the causes that appear among all the years descending order of ranking. Now we can recognize the six main causes of death in South Korea is stroke, Ischaemic Heart Disease, Stomach Cancer, Trachea Bronchus Lung Cancer, Liver Cancer, and Self Harm. Looking at @fig-intersect_all_data_graph, we can see some interesting trends. For example, there is a plunge in the annual number of deaths from stroke over the 19 year span. On the other hand, there has been increases for the causes of Ischaemic heart disease and Trachea, Bronchus, Lung cancer. There is a slight decrease in stomach cancer while liver cancer didn't fluctuate as much. Self harm is interesting because Korea is known to have the highest suicide rates out of all the OECD countries(Citation), and we see an increase in the number deaths from self harm has increased rapidly from 2000 to 2010 and a small decrease from 2010 to 2015. It seems like the death numbers from self harm has plateaued with a very slow rate of increase. In general, the top 10 most common causes of deaths are stroke, heart disease, stomach cancer, lung cancer, road injury, liver cancer, diabetes, Cirrhosis of the liver(liver damage), and self harm.
 
 ```{r}
 #| label: tbl-all_data_one
@@ -94,7 +94,7 @@ head(intersect_all_data, n = 24) |>
 
 ```{r}
 #| label: fig-intersect_all_data_graph
-#| fig-cap: Line Graph of Common Mortality Causes of South Korea
+#| fig-cap: Mortality causes that appear in all four years
 #| echo: false
 #| warning: false
 #| message: false
@@ -102,7 +102,7 @@ head(intersect_all_data, n = 24) |>
 intersect_all_data|>
   ggplot(aes(x = Year, y = Deaths, color = Cause)) +
   geom_line() +
-  ggtitle("Common Mortality Causes") +
+  ggtitle("Mortality causes common among all four years") +
   xlab("Year") +
   ylab("Annual Number of Deaths in South Korea") +
   theme_minimal() +
@@ -138,7 +138,7 @@ The goal the Bayesian model is to incorporate prior knowledge such as previous s
 
 ## Model set-up
 
-The two models that are used in this paper are poisson and negative binomial which are both run in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`. Both models define $y_i$ as the number of deaths to a specific cause. For the poisson model it is followed by the mean parameter $\gamma_i$. The mean parameter $\gamma_i$ is modeled as an exponential of a linear combination of the intercept $\alpha_i$, regression coefficient $\beta_i$ where $i$ is the predictor, and an extra coefficient $\gamma_i$. All three $\alpha_i$, $\beta_i$, and $\gamma_i$ follows a normal distribution with mean 0 and standard deviation of 2.5 as the prior. The negative Binomial model has a mean parameter $\mu_i$ and a dispersion parameter $\phi$. $\mu_i$ is modeled as the exponential of a lienar combination of an intercept $\alpha_i$, coefficients $\beta_i$ which represents the effects of each cause on the number of deaths, and $\gamma_i$ will account for any extra variability in our scenario. The intercept $\alpha_i$ and coefficient of cause $\beta_i$ follow a normal distribution with mean 0 and a standard deviation of 2.5. The dispersion parameter $\phi$ follows an exponential distribution with a rate parameter of 1. In summary, both poisson and negative binomial models work towards predicting the number of deaths based on the different causes assuming each cause has a coefficient affecting the number of deaths.
+The two models that are used in this paper are poisson and negative binomial which are both run in R [@citeR] using the `rstanarm` package of @citerstanarm. We use the default priors from `rstanarm`. Both models define $y_i$ as the number of deaths to a specific cause. For the poisson model it is followed by the mean parameter $\gamma_i$. The mean parameter $\gamma_i$ is modeled as an exponential of a linear combination of the intercept $\alpha_i$, regression coefficient $\beta_i$ where $i$ is the predictor, and an extra coefficient $\gamma_i$. All three $\alpha_i$, $\beta_i$, and $\gamma_i$ follows a normal distribution with mean 0 and standard deviation of 2.5 as the prior. The negative Binomial model has a mean parameter $\mu_i$ and a dispersion parameter $\phi$. $\mu_i$ is modeled as the exponential of a lienar combination of an intercept $\alpha_i$, coefficients $\beta_i$ which represents the effects of each cause on the number of deaths, and $\gamma_i$ will account for any extra variability in our scenario. The intercept $\alpha_i$ and coefficient of cause $\beta_i$ follow a normal distribution with mean 0 and a standard deviation of 2.5. The dispersion parameter $\phi$ follows an exponential distribution with a rate parameter of 1. In summary, both poisson and negative binomial models work towards predicting the number of deaths based on the different causes assuming each cause has a coefficient affecting the number of deaths.
 
 ```{=tex}
 \begin{align}
@@ -163,7 +163,7 @@ y_i &\sim \text{NegBinomial}(\mu_i, \phi) \quad \text{(1)} \\
 
 ## Model justification
 
-Applying the information from @tbl-intersect_data_one, it is difficult to generalize whether there would be a positive or negative correlation between the number of deaths and its cause. This is because every year there is a different number of deaths from the same cause. For example, from @fig-intersect_all_data_graph, we can expect that stroke would have negative correlation coefficient because the annual number of deaths has decreased significantly over the 9 years period. On the other hand, we may predict a positive correlation coefficient for the causes like heart disease and lung cancer as they have been showing an increase trend in the number of deaths since 2000 to 2019. It may be difficult to exactly predict how self harm, liver cancer, and stomach cancer without the actual calculations being done due to the ambiguity the data shows.
+Applying the information from @tbl-intersect_data_one, it is difficult to generalize whether there would be a positive or negative correlation between the number of deaths and its cause. This is because every year there is a different number of deaths from the same cause. For example, from @fig-intersect_all_data_graph, we can expect that stroke would have negative correlation coefficient because the annual number of deaths has decreased significantly over the 19 years period. On the other hand, we may predict a positive correlation coefficient for the causes like heart disease and lung cancer as they have been showing an increase trend in the number of deaths since 2000 to 2019. It may be difficult to exactly predict how self harm, liver cancer, and stomach cancer without the actual calculations being done due to the ambiguity the data shows.
 
 
 # Results
@@ -289,13 +289,13 @@ loo_compare(poisson, neg_binomial)
 
 ## First discussion point {#sec-first-point}
 
-In @fig-intersect_all_data_graph, we have observed that the number of deaths from stroke has decreased while lung cancer and heart disease has increased. In this section we are interested in why these trends may have occurred. Stroke is known to be a brain attack occurring when something blocks the blood supply to the brain or when a blood vessel in the brain bursts. Stroke has been known to be one of the leading causes of deaths in many countries over the past decade. This is because some can fully recover but the median survival after stoke is approximately 5 to 10 years. Over the 9 year period of our data, there has been significant improvements in healthcare, stroke rehabilitation, and advances in the acute stroke treatment globally has led to a remarkable decrease in the mortality from stroke. However, as we see in @sec-model_results, the model expects an increase in the number of deaths from stroke, this could so because stroke is also caused due to stress and other unknown factors which is why despite the improvement in technology, it is still a leading factor of mortality globally. 
+In @fig-intersect_all_data_graph, we have observed that the number of deaths from stroke has decreased while lung cancer and heart disease has increased. In this section we are interested in why these trends may have occurred. Stroke is known to be a brain attack occurring when something blocks the blood supply to the brain or when a blood vessel in the brain bursts. Stroke has been known to be one of the leading causes of deaths in many countries over the past decade. This is because some can fully recover but the median survival after stoke is approximately 5 to 10 years. Over the 19 year period of our data, there has been significant improvements in healthcare, stroke rehabilitation, and advances in the acute stroke treatment globally has led to a remarkable decrease in the mortality from stroke. However, as we see in @sec-model_results, the model expects an increase in the number of deaths from stroke, this could so because stroke is also caused due to stress and other unknown factors which is why despite the improvement in technology, it is still a leading factor of mortality globally. 
 
 TBL cancer is known to be the second most common cancer globally. Trachea refers to the windpipe and bronchi are the two large tubes that carry air from the trachea to each lungs. TBL cancer refers to any cancer that is caused in these areas of the human body. Smoking is known to be the most important risk factors of lung cancer and thankfully there has been a decrease in the number of smokers over time. This is maybe why the in @sec-model_results, the two models expect a decrease in mortality in from TBL cancer. Then why may @fig-intersect_all_data_graph display an increasing trend. This could be due to the aging population and because of treatment delays. Lung cancer can be cured when found in its early stages, but when found in the later stages, it becomes much more difficult to cure and is likely to lead to death. Such reasons may be why the mortality from lung cancer is one of the highest even within the category of all cancer types not only any mortality causes. 
 
 ## Second discussion point
 
-It is always interesting to look deep into the self harm numbers of South Korea as it is notorious around the world. One of the main reasons this trend occurs is due to the high social pressure from the competitive and success oriented society. We expect that students may have be the leading cause of this high self harm rates, but also it is because of poverty among elderly citizens. While looking at the raw data, we could observe some interesting trends between road injuries and self harm. @fig-comparison_suicide_carinjury represents this data and the trend. Initially in 2000, number of deaths from car injuries were twice the number of self harm, but as time passed, self harm exceeded car injuries by more than twice now. While deaths from car injuries has decreased significantly over the 9 years likely thanks to the improvement of technology, health care, and social consciousness. On the other hand, the increase in deaths from self harm is presumably from socio-economical disparities, aging population, and decreases in birth rates. For some reason, despite the governments effort and policies, it has been possible to decrease deaths from car injuries but not from self harm. This is crucial to mention because the number of deaths from self harm is not high only among a certain gender or age group. It is not just among high school students nor elderly nor men nor female, it is the whole society that is not doing well mentally leading to such painful results. Some methods that can be implemented in decreasing the number of deaths could be by government advertisement on getting therapy. This is because in Korea, people find it difficult to talk and go to therapists and get counselling due to social pressures and negative views towards people going to therapy. 
+It is always interesting to look deep into the self harm numbers of South Korea as it is notorious around the world. One of the main reasons this trend occurs is due to the high social pressure from the competitive and success oriented society. We expect that students may have be the leading cause of this high self harm rates, but also it is because of poverty among elderly citizens. While looking at the raw data, we could observe some interesting trends between road injuries and self harm. @fig-comparison_suicide_carinjury represents this data and the trend. Initially in 2000, number of deaths from car injuries were twice the number of self harm, but as time passed, self harm exceeded car injuries by more than twice now. While deaths from car injuries has decreased significantly over the 19 years likely thanks to the improvement of technology, health care, and social consciousness. On the other hand, the increase in deaths from self harm is presumably from socio-economical disparities, aging population, and decreases in birth rates. For some reason, despite the governments effort and policies, it has been possible to decrease deaths from car injuries but not from self harm. This is crucial to mention because the number of deaths from self harm is not high only among a certain gender or age group. It is not just among high school students nor elderly nor men nor female, it is the whole society that is not doing well mentally leading to such painful results. Some methods that can be implemented in decreasing the number of deaths could be by government advertisement on getting therapy. This is because in Korea, people find it difficult to talk and go to therapists and get counselling due to social pressures and negative views towards people going to therapy. 
 
 \FloatBarrier
 ```{r}
@@ -322,7 +322,6 @@ merged_selected|>
 
 ## Third discussion point
 
- talk about less common data
 \FloatBarrier
 ```{r}
 #| echo: false
@@ -337,7 +336,7 @@ merged_selected|>
 common_all_data|>
   ggplot(aes(x = Year, y = Deaths, color = Cause)) +
   geom_line() +
-  ggtitle("Mortality Causes Appearing at least twice") +
+  ggtitle("Common Mortality Causes") +
   xlab("Year") +
   ylab("Annual Number of Deaths in South Korea") +
   theme_minimal() +
@@ -346,10 +345,13 @@ common_all_data|>
 
 ```
 
+Going back into the initial purpose of the paper; looking into the top ten mortality causes of South Korea. Due to the modelling, we were only able look deep into the six common causes instead. Thus, in this section it would be more adequate to get back closer to the initial question but make it interesting as well, we look into mortality causes that appear in at least two of the four years. @fig-less_common_data is the representation of the data that has been cleaned to analyze the new question. Now we have twelve causes to look into instead of the six we had. In addition to the ones we had there are Alzheimer disease, chronic obstructive pulmonary disease(COPD), colon and rectum cancer, diabetes, kidney disease, and lower respiratory infections. Colon and rectum cancer, diabetes, kidney disease, and Alzheimer disease do not exhibit much fluctuations. It is worth noting the steep increase in lower respiratory infections over the 9 year span. One of the main reasons of this trend is also due to aging society. Lower respiratory infection is known to have increased risk of developing when you are older. As the human body gets older, our respiratory system becomes more prone to infectious diseases. As a result, when the society is aged in general, it is likely that the number of deaths from lower respiratory infection increases as well. It is crucial to analyze and know about the top causes of mortality in countries because countries can use the data to decide where to invest in to prevent or decrease the number of people dying from certain causes so our general happiness increases from the satisfaction of life. 
+
 ## Weaknesses and next steps
 
-Weaknesses and next steps should also be included.
-next step talking about how the relseae of this paper may let people understand and be shocked from the data because  normally people don't get to see a graph will lots of the top causes of death plotted over time and thus don't realize it is more serious than what people think and be more aware of their health and surroundings. 
+There are some weaknesses that occur throughout the paper that may affect some of our results slightly. The number of deaths is an estimate that WHO has made based on standard categories, definitions and methods to ensure cross-national comparability. The WHO states that it is their best estimates and ensures that the quality of the data for South Korea is greatly reliable but there still may be some flaws which may have affected our analysis slightly. It may not be a significant error as the data itself is from the WHO which would ensure high quality of data however, it is worth mentioning that our raw data was based off of an estimate. Another weakness that can occur is from modelling. This is because we only looked into the poisson and negative binomial model as we assumed these two models would be the best fit for the obtained raw and cleaned data. There may be other models such as the logistic regression or multilevel modelling which we didn't look into in this paper. Since we haven't modeled these, we are unsure as these other models could be a better fit for our data and provide us with different results. Lastly, a weakness that occurs is from modelling as well. In @fig-intersect_all_data_graph we observed six different causes of mortality in South Korea but in the @tbl-poisson_sum_model, and @tbl-neg_bin_sum_model, we only observe five of the six causes modeled. This could be due to multiple reasons such as data issue, perfect separation, model convergence, and overparametrization. Out of these four possibilities, data issue has been checked and perfect separation has been checked through box plotting the data and didn't have any issues. Thus, this weakness has likely occurred from either model convergence or overparametrization. Model convergence is wehen there is an issue in the convergence of the models, which if it is the problem, we may need to adjust the models or use other modelling techniques. Overparametrization happens when there are too many parameters to estimate the compared to the number of observations leading to a convergence issue. 
+
+For future studies, it would be suggested to use more models or more complex models to increase the accuracy of the model results and further, it would be possible to use continuous data over the most recent 10 years or all 19 years if possible. This way, we would be able to obtain much more precise data and results because this paper has used discrete data for the four years chosen; if it is continuous, we would be able to analyze trends in an explicit manner. It is crucial to do such analysis because people looking into the paper can be shocked since we normally don't see graphs like this with top causes of mortality modeled in one. Even if we do, we see it on the news for a certain cause of mortality instead all the top causes combined. This helps citizens, medical fields, and governments be more aware and decide on policies to implement to prevent or decrease the number of deaths for causes that are plausible.
 
 \newpage
 
@@ -357,21 +359,21 @@ next step talking about how the relseae of this paper may let people understand 
 
 # Appendix {.unnumbered}
 
-# Additional data details
-
 # Model details {#sec-model-details}
 
 ## Posterior predictive check {#sec-posterior_check}
 
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
+In @fig-ppcheck_posterior-1 we implement a posterior predictive check. This show the comparison between the simulated data to the actual observed data to assess whether the model is adequate. This shows the comparison for the poisson model and we can assess how well each model fits the observed data.   
 
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows...
+In @fig-ppcheck_posterior-2 we compare the posterior with the prior. This shows how well the negative binomial model fits the observed data.
+
+Based on the two checks we can conclude that the negative binomial model fits the observed data better than the poisson model by visually inspecting the plots (comparing Yrep and Y).
 
 ## Diagnostics
 
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
+@fig-loo_check is a trace and Rhat plot of the negative binomial and poisson model. The trace plot shows an estimate of the model's predictive performance and helps identify any potential over fitting or under fitting issues. The Raht plot compares the variance within individual Markov chains to the variable between the chains. A value of 1 suggests convergence, while a value greater than 1 suggests lack of convergence.
 
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
+@fig-loo_check suggests that the negative binomial model is a much better fit for the data than poisson model we have because it has a larger ELPD value and the Rhat plot is much greater for the poisson model proposing lack of convergence.
 
 \newpage
 
